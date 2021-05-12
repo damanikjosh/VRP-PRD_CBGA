@@ -1,5 +1,5 @@
 k_path = path{curr_k};
-k_time = time{curr_k};
+k_time = time{curr_k}; %TODO timestamp
 k_bundle = bundle{curr_k};
 k_cost = cost{curr_k};
 k_score = score(:,:,curr_k);
@@ -14,7 +14,7 @@ for phase1_iter = 1:20
     
     k_next_bundle = zeros(0,2);
     k_next_path = cell(0,1);
-    k_next_time = cell(0,1);
+    k_next_time = cell(0,1); %TODO timestamp
     k_next_score = zeros(0,1);
     k_next_score_bar = zeros(0,1);
     k_next_add_nodes = zeros(0,2);
@@ -41,7 +41,7 @@ for phase1_iter = 1:20
             
             k_next_bundle(m,:) = [d e];
             k_next_path{m} = m_min_path;
-            k_next_time{m} = m_min_time;
+%             k_next_time{m} = m_min_time; #TODO timestamp
             
             k_next_add_nodes(m,:) = m_min_add_nodes;
             k_next_add_dist(m) = m_min_add_dist;
@@ -52,7 +52,7 @@ for phase1_iter = 1:20
             hde = false;
             
             if isempty(min_yfd) || (cde < min_yfd) || ...
-                    ((k_reqs(d,e) == 1) && ((k_score(d,e) == 0) ...
+                    ((k_reqs(d,e) == 1) && ((k_score(d,e) == 0) ... #TODO temporal
                      || (cde < k_score(d,e))))
                 hde = true;
             end
@@ -75,7 +75,7 @@ for phase1_iter = 1:20
     k_max_d = k_next_bundle(k_max_m,1);
     k_max_e = k_next_bundle(k_max_m,2);
     
-    if (k_reqs(k_max_d, k_max_e) == 0) && ...
+    if (k_reqs(k_max_d, k_max_e) == 0) && ... #TODO temporal
             (isempty(min(k_score(k_max_d,k_score(k_max_d,:)>0))) || ...
             (k_max_score_warped < min(k_score(k_max_d,k_score(k_max_d,:)>0))))
         for f = 1:num_edges
@@ -93,7 +93,7 @@ for phase1_iter = 1:20
     
     % Combining tasks
 %     for f = 1:num_edges
-%         if (k_max_e == f) || (k_reqs(k_max_d,k_max_e) == 0) || ...
+%         if (k_max_e == f) || (k_reqs(k_max_d,k_max_e) == 0) || ... #TODO temporal
 %                 (k_reqs(k_max_d,f) == 0) || (k_winner(k_max_d,f) ~= curr_k)
 %             continue
 %         end
@@ -126,7 +126,7 @@ for phase1_iter = 1:20
     
     k_bundle = [k_bundle; k_next_bundle(k_max_m,:)];
     k_path = k_next_path{k_max_m};
-    k_time = k_next_time{k_max_m};
+%     k_time = k_next_time{k_max_m}; #TODO timestamp
     k_add_nodes = [k_add_nodes; k_next_add_nodes(k_max_m, :)];
     k_add_dist = [k_add_dist k_next_add_dist(k_max_m)];
     k_cost = [k_cost k_max_score_warped];

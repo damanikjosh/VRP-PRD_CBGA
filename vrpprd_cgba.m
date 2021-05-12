@@ -4,15 +4,15 @@ rng_num = 1;
 rng(1);
 
 T_SAT_MAX = 5;
-S_MAX = 13;
+S_MAX = 20;
 Q_MAX = 20;
 
-generate_graph;
+generate_graph_random;
 generate_edges;
 
 bundle = cell(num_agents, 1);
 path = cell(num_agents, 1);
-time = cell(num_agents, 1);
+time = cell(num_agents, 1); %TODO timestamp
 cost = cell(num_agents, 1);
 add_nodes = cell(num_agents, 1);
 add_dist = cell(num_agents, 1);
@@ -40,7 +40,7 @@ for iter = 1:20
         phase_1;
         bundle{k} = k_bundle;
         path{k} = k_path;
-        time{k} = k_time;
+%         time{k} = k_time; %TODO timestamp
         score(:,:,k) = k_score;
         winner(:,:,k) = k_winner;
         cost{k} = k_cost;
@@ -50,7 +50,7 @@ for iter = 1:20
         phase_2;
         bundle{k} = k_bundle;
         path{k} = k_path;
-        time{k} = k_time;
+%         time{k} = k_time; %TODO timestamp
         score(:,:,k) = k_score;
         winner(:,:,k) = k_winner;
         cost{k} = k_cost;

@@ -1,7 +1,7 @@
 % clear, clc, close all;
 
-num_hubs = 5;
-num_delivs = 5;
+num_hubs = 10;
+num_delivs = 10;
 num_agents = 3;
 
 max_reward = 100;

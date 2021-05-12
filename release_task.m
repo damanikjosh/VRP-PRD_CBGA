@@ -9,7 +9,7 @@ if k_bundle_rel > 0
                 continue
             end
             k_path(k_add_nodes(nn,idx)) = [];
-            k_time(k_add_nodes(nn,idx)) = [];
+%             k_time(k_add_nodes(nn,idx)) = []; #TODO timestamp
         end
         k_score(k_bundle(nn,1), k_bundle(nn,2)) = 0;
         k_winner(k_bundle(nn,1), k_bundle(nn,2)) = 0;
