@@ -1,10 +1,10 @@
 clear all, clc, close all;
 
 rng_num = 1;
-rng(1);
+rng(2);
 
 T_SAT_MAX = 5;
-S_MAX = 20;
+S_MAX = 2000;
 Q_MAX = 20;
 
 generate_graph_random;

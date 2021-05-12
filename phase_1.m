@@ -136,9 +136,9 @@ for phase1_iter = 1:20
     k_winner(k_max_d, k_max_e) = curr_k;
     
     k_last_dist = k_last_dist + k_next_add_dist(k_max_m);
-    fprintf('Agent %d, Iteration %d: [%d %d] %.4f %.4f, Path:', ...
+    fprintf('Agent %d, Iteration %d: [%d %d] %.4f %.4f\n', ...
         curr_k, phase1_iter, k_max_d, k_max_e, k_max_score_warped, ...
         k_next_score(k_max_m));
-    disp([agent(curr_k).nodes(1) k_path agent(curr_k).nodes(2)]);
+%     disp([agent(curr_k).nodes(1) k_path agent(curr_k).nodes(2)]);
     disp('');
 end
