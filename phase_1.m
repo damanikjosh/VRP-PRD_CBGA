@@ -8,6 +8,8 @@ k_add_nodes = add_nodes{curr_k};
 k_add_dist = add_dist{curr_k};
 
 k_last_dist = 0;
+a = [1 2 3 4 5 3];
+a = a(find(a==3,1):end);
 
 for phase1_iter = 1:20
     calc_k_reqs;
@@ -28,12 +30,25 @@ for phase1_iter = 1:20
             end
             
             m_last_dist = k_last_dist;
-            
-            [m_min_path, m_min_add_nodes, m_min_add_dist, m_min_cost, m_min_time] ...
-                = generate_path_greedy(agent(curr_k), deliv(d), ...
-                                       k_last_dist, k_path, ...
-                                       edges(e, 1:2), sij);
-            if m_last_dist + m_min_add_dist > agent(k).smax
+%             if isempty(k_path)
+%                 m_last_dist = m_last_dist + ...
+%                               sij(agent(curr_k).nodes(1), agent(curr_k).nodes(2));
+%             else
+%                 m_last_dist = m_last_dist + ...
+%                               sij(agent(curr_k).nodes(1), k_path(1)) + ...
+%                               sij(k_path(end), agent(curr_k).nodes(2));
+%             end
+%             
+%             m_last_path = k_path;
+%             m_nodes = edges(e, 1:2);
+%             generate_path_greedy;
+            m_nodes = edges(e, 1:2);
+            [m_min_path, m_min_add_nodes, m_min_dist, m_min_time] ...
+                = generate_path_greedy(agent(curr_k), k_path, m_nodes, sij);
+            m_min_add_dist = m_min_dist - m_last_dist;
+            m_min_cost = m_min_dist + RELAY_MULT*calc_dist([deliv(d).nodes(1) m_nodes(1) deliv(d).nodes(1)], sij) ...
+                                    + RELAY_MULT*calc_dist([m_nodes(2) deliv(d).nodes(2) m_nodes(2)], sij);
+            if isempty(m_min_path)
                 continue
             end
             
@@ -136,9 +151,9 @@ for phase1_iter = 1:20
     k_winner(k_max_d, k_max_e) = curr_k;
     
     k_last_dist = k_last_dist + k_next_add_dist(k_max_m);
-    fprintf('Agent %d, Iteration %d: [%d %d] %.4f %.4f\n', ...
+    fprintf('Agent %d, Iteration %d: [%d %d] %.4f %.4f Path: \n', ...
         curr_k, phase1_iter, k_max_d, k_max_e, k_max_score_warped, ...
         k_next_score(k_max_m));
-%     disp([agent(curr_k).nodes(1) k_path agent(curr_k).nodes(2)]);
+    disp([agent(curr_k).nodes(1) k_path agent(curr_k).nodes(2)]);
     disp('');
 end

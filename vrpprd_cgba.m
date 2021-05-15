@@ -1,11 +1,12 @@
 clear all, clc, close all;
 
 rng_num = 1;
-rng(2);
+rng(1);
 
 T_SAT_MAX = 5;
-S_MAX = 2000;
+S_MAX = 25;
 Q_MAX = 20;
+RELAY_MULT = 1;
 
 generate_graph_random;
 generate_edges;
