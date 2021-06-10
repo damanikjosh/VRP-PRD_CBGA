@@ -29,6 +29,21 @@ for e = 1:num_edges
     end
 end
 
+%% Temporal constant
+temps = zeros(num_edges, num_edges, num_delivs);
+for d = 1:num_delivs
+    for e = 1:num_edges
+        if edges(e, 1) ~= deliv(d).nodes(1)
+            [~, f] = ismember([deliv(d).nodes(1) edges(e,1)], edges(:,1:2), 'rows');
+            temps(f, e, d) = 1; 
+        end
+        if edges(e, 2) ~= deliv(d).nodes(2)
+            [~, f] = ismember([edges(e,2) deliv(d).nodes(2)], edges(:,1:2), 'rows');
+            temps(e, f, d) = 1;
+        end
+    end
+end
+
 %% Visualization
 
 figure(1);
@@ -54,6 +69,7 @@ grid on;
 axis equal;
 axis([-0.5 10.5 -0.5 10.5]);
 title('Delivery problems');
+saveas(gcf, strcat(int2str(rng_num), 'a.png'));
 
 figure(2);
 

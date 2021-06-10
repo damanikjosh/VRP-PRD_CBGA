@@ -1,7 +1,7 @@
 clear all, clc, close all;
 
-rng_num = 1;
-rng(1);
+rng_num = 2;
+rng(rng_num);
 
 T_SAT_MAX = 5;
 S_MAX = 25;
@@ -28,7 +28,7 @@ end
 
 score = zeros(num_delivs, num_edges, num_agents);
 winner = zeros(num_delivs, num_edges, num_agents);
-timestamp = zeros(num_delivs, num_edges, num_agents);
+timestamp = zeros(num_edges, num_agents);
 
 t_start = tic;
 t_sat = 0;
@@ -41,7 +41,7 @@ for iter = 1:20
         phase_1;
         bundle{k} = k_bundle;
         path{k} = k_path;
-%         time{k} = k_time; %TODO timestamp
+        time{k} = k_time; %TODO timestamp
         score(:,:,k) = k_score;
         winner(:,:,k) = k_winner;
         cost{k} = k_cost;
@@ -83,6 +83,9 @@ for k = 1:num_agents
                  'LineWidth', 2);
 end
 title(sprintf('Solution (%.2fs)', t_end));
+saveas(gcf, strcat(int2str(rng_num), 'b.png'));
+
+% close all;
 
 %%
 fprintf('=========================================================\n');

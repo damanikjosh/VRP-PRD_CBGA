@@ -31,3 +31,8 @@ codegen/
 octave-workspace
 
 sandbox/
+
+# Simulation results
+*a.png
+*b.png
+*c.png

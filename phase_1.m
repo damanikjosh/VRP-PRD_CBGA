@@ -56,7 +56,7 @@ for phase1_iter = 1:20
             
             k_next_bundle(m,:) = [d e];
             k_next_path{m} = m_min_path;
-%             k_next_time{m} = m_min_time; #TODO timestamp
+            k_next_time{m} = m_min_time; %TODO timestamp
             
             k_next_add_nodes(m,:) = m_min_add_nodes;
             k_next_add_dist(m) = m_min_add_dist;
@@ -117,6 +117,10 @@ for phase1_iter = 1:20
 %         nodes_f = edges(f,1:2);
 % 
 %         inter = ismember(nodes_f, nodes_e);
+%         if inter(1) == 0 && inter(2) == 0
+%             fprintf('Cannot combine\n');
+%             continue
+%         end
 %         if inter(1)
 %             combd = [nodes_e(1) nodes_f(2)];
 %         else
@@ -128,9 +132,20 @@ for phase1_iter = 1:20
 %         release_task;
 % 
 %         [~, k_max_e] = ismember(combd, edges(:,1:2), 'rows');
-%         [m_min_path, m_min_add_nodes, m_min_add_dist, m_min_cost]...
-%             = generate_path_greedy(agent(curr_k), deliv(k_max_d), ...
-%                                    k_last_dist, k_path, combd, sij);
+%         m_nodes = combd;
+%         [m_min_path, m_min_add_nodes, m_min_dist, m_min_time] ...
+%                 = generate_path_greedy(agent(curr_k), k_path, m_nodes, sij, false);
+%         m_min_add_dist = m_min_dist - k_last_dist;
+%         m_min_cost = m_min_dist + RELAY_MULT*calc_dist([deliv(d).nodes(1) m_nodes(1) deliv(d).nodes(1)], sij) ...
+%                                 + RELAY_MULT*calc_dist([m_nodes(2) deliv(d).nodes(2) m_nodes(2)], sij);
+%         
+% %         if isempty(m_min_path)
+% %             continue
+% %         end
+%                                 
+% %         [m_min_path, m_min_add_nodes, m_min_add_dist, m_min_cost]...
+% %             = generate_path_greedy(agent(curr_k), deliv(k_max_d), ...
+% %                                    k_last_dist, k_path, combd, sij);
 %         
 %         k_next_bundle(k_max_m,:) = [k_max_d, k_max_e];
 %         k_next_path{k_max_m} = m_min_path;
@@ -141,7 +156,7 @@ for phase1_iter = 1:20
     
     k_bundle = [k_bundle; k_next_bundle(k_max_m,:)];
     k_path = k_next_path{k_max_m};
-%     k_time = k_next_time{k_max_m}; #TODO timestamp
+    k_time = k_next_time{k_max_m}; %TODO timestamp
     k_add_nodes = [k_add_nodes; k_next_add_nodes(k_max_m, :)];
     k_add_dist = [k_add_dist k_next_add_dist(k_max_m)];
     k_cost = [k_cost k_max_score_warped];
