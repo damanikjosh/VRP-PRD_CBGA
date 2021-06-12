@@ -1,10 +1,10 @@
 clear all, clc, close all;
 
-rng_num = 2;
+rng_num = 10;
 rng(rng_num);
 
 T_SAT_MAX = 5;
-S_MAX = 25;
+S_MAX = 30;
 Q_MAX = 20;
 RELAY_MULT = 1;
 
@@ -13,22 +13,20 @@ generate_edges;
 
 bundle = cell(num_agents, 1);
 path = cell(num_agents, 1);
-time = cell(num_agents, 1); %TODO timestamp
-cost = cell(num_agents, 1);
-add_nodes = cell(num_agents, 1);
-add_dist = cell(num_agents, 1);
+% timestamp = cell(num_agents, 1);
 
 for k = 1:num_agents
-    bundle{k} = zeros(0,2);
-    path{k} = [];
-    cost{k} = [];
-    add_nodes{k} = [];
-    add_dist{k} = [];
+    bundle{k} = [];
+%     path{k} = struct();
+    path{k}.node = [];
+    path{k}.time = [];
+    path{k}.tr = [];
+%     timestamp{k} = [];
 end
 
 score = zeros(num_delivs, num_edges, num_agents);
 winner = zeros(num_delivs, num_edges, num_agents);
-timestamp = zeros(num_edges, num_agents);
+time = zeros(num_delivs, num_edges, num_agents);
 
 t_start = tic;
 t_sat = 0;
@@ -41,26 +39,29 @@ for iter = 1:20
         phase_1;
         bundle{k} = k_bundle;
         path{k} = k_path;
-        time{k} = k_time; %TODO timestamp
+%         timestamp{k} = k_timestamp;
         score(:,:,k) = k_score;
         winner(:,:,k) = k_winner;
-        cost{k} = k_cost;
-        add_nodes{k} = k_add_nodes;
-        add_dist{k} = k_add_dist;
+        time(:,:,k) = k_time;
         
         phase_2;
         bundle{k} = k_bundle;
         path{k} = k_path;
-%         time{k} = k_time; %TODO timestamp
+%         timestamp{k} = k_timestamp;
         score(:,:,k) = k_score;
         winner(:,:,k) = k_winner;
-        cost{k} = k_cost;
-        add_nodes{k} = k_add_nodes;
-        add_dist{k} = k_add_dist;
+        time(:,:,k) = k_time;
+        
+        phase_3;
+        bundle{k} = k_bundle;
+        path{k} = k_path;
+%         timestamp{k} = k_timestamp;
+        score(:,:,k) = k_score;
+        winner(:,:,k) = k_winner;
+        time(:,:,k) = k_time;
         
         fprintf('Agent %d\n', k);
-        disp(k_path);
-        disp([k_bundle k_cost']);
+        disp([k_path.node; k_path.time; k_path.tr]);
     end
     
     if isequal(score, last_score)
@@ -78,7 +79,7 @@ t_end = toc(t_start);
 %%
 figure(2);
 for k = 1:num_agents
-    highlight(p, [agent(k).nodes(1) path{k} agent(k).nodes(2)], ...
+    highlight(p, [agent(k).nodes(1) [path{k}.node] agent(k).nodes(2)], ...
                  'EdgeColor', agent_color(k,:), ...
                  'LineWidth', 2);
 end
@@ -94,7 +95,7 @@ fprintf('=========================================================\n');
 for k = 1:num_agents
     fprintf('A%d\t:\t', k);
     for n = 1:length(path{k})
-        fprintf('%d > ', path{k}(n));
+        fprintf('%d > ', path{k}(n).node);
     end
     fprintf('END\n');
 end

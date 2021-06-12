@@ -75,7 +75,7 @@ for k = 1:num_agents
     adj(agent(k).nodes(1), agent(k).nodes(2)) = 1;
 end
 
-sij = sparse(num_nodes, num_nodes);
+sij = zeros(num_nodes, num_nodes);
 rewards = zeros(num_nodes, num_nodes, num_delivs);
 for i = 1:num_nodes
     for j = 1:num_nodes

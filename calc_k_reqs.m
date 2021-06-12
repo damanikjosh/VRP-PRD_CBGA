@@ -1,23 +1,8 @@
 k_reqs = zeros(num_delivs, num_edges);
-k_temps = zeros(num_edges, num_edges, num_delivs);
+k_tr = zeros(num_delivs, num_edges);
+k_dely = +1e10 * ones(num_delivs, num_edges);
+
 for dd = 1:num_delivs
-%     for ee = 1:num_edges
-%         if k_score(dd, ee) == 0
-%             continue
-%         end
-%         if deliv(dd).nodes(1) ~= edges(ee, 1)
-%             k_reqs(dd, ee) = 1;
-%             [~, ff] = ismember([deliv(dd).nodes(1) edges(ee, 1)], edges(:,1:2), 'rows');
-%             k_reqs(dd, ff) = 1;
-%             k_temps(ff, ee, dd) = -1e10;
-%         end
-%         if deliv(dd).nodes(2) ~= edges(ee, 2)
-%             k_reqs(dd, ee) = 1;
-%             [~, ff] = ismember([edges(ee, 2) deliv(dd).nodes(2)], edges(:,1:2), 'rows');
-%             k_reqs(dd, ff) = 1;
-%             k_temps(ee, ff, dd) = -1e10;
-%         end
-%     end
     req_edges = find(k_score(dd, :) > 0);
     if isempty(req_edges)
         continue
@@ -60,4 +45,19 @@ for dd = 1:num_delivs
         [~, ff] = ismember([req_nodes(2) deliv(dd).nodes(2)], edges(:,1:2), 'rows');
         k_reqs(dd, ff) = 1;
     end
+    
+    for ee = 1:num_edges %TODO: Balikin ke req_nodes aja
+        for ff = ee+1:num_edges
+            
+            if temps(ee, ff, dd)
+                k_tr(dd, ff) = max([k_tr(dd, ff) k_time(dd, ee)]);
+%                 fprintf('%d %d %.4f\n', ee, ff, k_time(dd, ee));
+            end
+            if temps(ff, ee, dd)
+                k_tr(dd, ee) = max([k_tr(dd, ee) k_time(dd, ff)]);
+%                 fprintf('%d %d %.4f\n', ff, ee, k_time(dd, ff));
+            end
+        end
+    end
 end
+
