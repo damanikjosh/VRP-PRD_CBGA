@@ -20,7 +20,11 @@ for phase1_iter = 1:20
                 continue
             end
             
-            k_next_bundle = k_bundle.append([d e], edges(e, 1:2), k_trel(d,e), k_rewards(d, e), sij);
+%             k_next_bundle = k_bundle.append([d e], edges(e, 1:2), k_trel(d,e), k_rewards(d, e), sij);
+%             if k_trel(d,e) > 0
+%                 fprintf('Agent %d: Release time for request (%d,%d) is %.4f\n', curr_k, d, e, k_trel(d,e));
+%             end
+            k_next_bundle = k_bundle.append([d e], edges(e, 1:2), trel(d,e, curr_k), rewards(d, e, curr_k), sij);
             if isequal(k_bundle, k_next_bundle)
                 continue
             end
@@ -48,32 +52,32 @@ for phase1_iter = 1:20
     fprintf('Agent %d: Added request (%d,%d) to bundle with margw %.4f\n', curr_k, k_max_req, k_max_margw);
     
     
-    
+    k_bundle = k_max_bundle;
+    k_score(k_max_req(1), k_max_req(2)) = k_max_margw;
+    k_winner(k_max_req(1), k_max_req(2)) = curr_k;
+    k_time(k_max_req(1), k_max_req(2)) = k_max_bundle.bids.time(end, 2);
 %     calc_k_reqs;
     
     if k_reqs(k_max_req(1), k_max_req(2)) == 0 && k_max_margw > max(k_score(k_max_req(1),:))
         fprintf('Agent %d: Resetting all requests from task %d\n', curr_k, k_max_req(1));
         for f = 1:num_edges
             if k_reqs(k_max_req(1), f) == 0 && k_score(k_max_req(1), f) > 0
-%                 if k_winner(k_max_req(1), f) == curr_k
-%                     [k_bundle, k_rel_reqs] = k_bundle.release(k_max_req, sij, true);
-%                     for n = 1:size(k_rel_reqs, 1)
-%                         k_score(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
-%                         k_winner(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
-%                         k_time(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
-%                     end
-%                 end
-                k_score(k_max_req(1), f) = 0;
-                k_winner(k_max_req(1), f) = 0;
-                k_winner(k_max_req(1), f) = 0;
+                if k_winner(k_max_req(1), f) == curr_k
+                    [k_bundle, k_rel_reqs] = k_bundle.release(k_max_req, sij, true);
+                    for n = 1:size(k_rel_reqs, 1)
+                        k_score(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
+                        k_winner(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
+                        k_time(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
+                    end
+                end
+%                 k_score(k_max_req(1), f) = 0;
+%                 k_winner(k_max_req(1), f) = 0;
+%                 k_winner(k_max_req(1), f) = 0;
             end
         end
     end
     
-    k_bundle = k_max_bundle;
-    k_score(k_max_req(1), k_max_req(2)) = k_max_margw;
-    k_winner(k_max_req(1), k_max_req(2)) = curr_k;
-    k_time(k_max_req(1), k_max_req(2)) = k_max_bundle.bids.time(end, 2);
+    
     
     
 %     [~, k_max_m] = min([k_next_bid.score]);

@@ -1,10 +1,10 @@
 clear all, clc, close all;
 
-rng_num = 1;
+rng_num = 2;
 rng(rng_num);
 
-T_SAT_MAX = 1;
-S_MAX = 200;
+T_SAT_MAX = 5;
+S_MAX = 2000;
 Q_MAX = 20;
 RELAY_MULT = 1;
 
@@ -24,9 +24,9 @@ time = zeros(num_delivs, num_edges, num_agents);
 t_start = tic;
 t_sat = 0;
 
+trel = zeros(num_delivs, num_edges, num_agents);
 
-
-for iter = 1:20
+for iter = 1:100
     last_score = score;
     last_time = time;
     
@@ -34,24 +34,24 @@ for iter = 1:20
         curr_k = k;
         
         k_rewards = rewards(:,:,k);
-        while true
+%         while true
             phase_1;
             bundle{k} = k_bundle;
             score(:,:,k) = k_score;
             winner(:,:,k) = k_winner;
             time(:,:,k) = k_time;
 
-            phase_3;
-            bundle{k} = k_bundle;
-            score(:,:,k) = k_score;
-            winner(:,:,k) = k_winner;
-            time(:,:,k) = k_time;
+%             phase_3;
+%             bundle{k} = k_bundle;
+%             score(:,:,k) = k_score;
+%             winner(:,:,k) = k_winner;
+%             time(:,:,k) = k_time;
             
             
-            if ~k_temporal_conflict
-                break
-            end
-        end
+%             if ~k_temporal_conflict
+%                 break
+%             end
+%         end
         
         phase_2;
         bundle{k} = k_bundle;
@@ -59,11 +59,18 @@ for iter = 1:20
         winner(:,:,k) = k_winner;
         time(:,:,k) = k_time;
         
-%         phase_3;
-%         bundle{k} = k_bundle;
-%         score(:,:,k) = k_score;
-%         winner(:,:,k) = k_winner;
-%         time(:,:,k) = k_time;
+%         fprintf('Agent %d\nBundle:\n', k);
+%         disp(array2table([k_bundle.bids.req'; k_bundle.bids.marg'; k_bundle.bids.margw'; k_bundle.bids.time(:,1)'; k_bundle.bids.time(:,2)'], 'RowName', {'d', 'e', 'marg', 'margw', 'time1', 'time2'}));
+%         fprintf('Path:\n');
+%         disp(array2table([k_bundle.path.node'; k_bundle.path.time'; k_bundle.path.trel'], 'RowName', {'Nodes', 'Time', 'Trel'}));
+%         fprintf('=========================================================\n');
+
+        
+        phase_3;
+        bundle{k} = k_bundle;
+        score(:,:,k) = k_score;
+        winner(:,:,k) = k_winner;
+        time(:,:,k) = k_time;
 %         
         
 %         bundle{k} = k_bundle;

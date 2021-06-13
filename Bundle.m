@@ -12,7 +12,7 @@ classdef Bundle
     end
     
     properties (Constant)
-        LAMBDA = 0.9
+        LAMBDA = 0.8
     end
     
     methods
@@ -53,7 +53,7 @@ classdef Bundle
             
             i = [];
             j = [];
-%             for ii = find(obj.path.node == app_nodes(1))
+%             for ii = find(obj.path.node == app_nodes(1))'
 %                 if obj.path.time(ii) >= trel %TODO: Check if enough
 %                     i = ii;
 %                     break
@@ -61,6 +61,9 @@ classdef Bundle
 %             end
             i = find(obj.path.node == app_nodes(1), 1); % Max
             j = find(obj.path.node == app_nodes(2), 1, 'last'); % Max
+%             if obj.path.time(j) < trel
+%                 j = [];
+%             end
             if isempty(i)
                 i = 0;
             end
@@ -92,7 +95,8 @@ classdef Bundle
                     max_bid = next_bids;
                     max_path = next_path;
                 end
-            elseif (i > 0) || (j > 0)
+            end
+            if (i > 0) || (j > 0)
                 if (i > 0)
 %                     disp('Case 2');
                     for jj = i:length(obj.path.node)-1
@@ -123,6 +127,9 @@ classdef Bundle
                 if (j > 0)
 %                     disp('Case 3');
                     for ii = 1:j-1
+                        if obj.path.time(ii) < trel
+                            continue
+                        end
                         next_path      = obj.path;
                         next_path.node = [next_path.node(1:ii); app_nodes(1); next_path.node(ii+1:end)];
                         next_path.trel = [next_path.trel(1:ii); trel        ; next_path.trel(ii+1:end)];
@@ -149,6 +156,9 @@ classdef Bundle
             else
 %                 disp('Case 4');
                 for ii = 1:length(obj.path.node)-1
+                    if obj.path.time(ii) < trel
+                        continue
+                    end
                     for jj = ii:length(obj.path.node)-1
                         next_path      = obj.path;
                         next_path.node = [next_path.node(1:ii); app_nodes(1); next_path.node(ii+1:jj); app_nodes(2); next_path.node(jj+1:end)];

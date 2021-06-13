@@ -1,5 +1,5 @@
 k_reqs = zeros(num_delivs, num_edges);
-k_trel = zeros(num_delivs, num_edges);
+
 % k_dely = +1e10 * ones(num_delivs, num_edges);
 
 for dd = 1:num_delivs
@@ -92,21 +92,8 @@ for dd = 1:num_delivs
     end
     
     for ii = 2:length(req_order_asc)
-       k_trel(dd, req_order_asc(ii)) = max([k_trel(dd, req_order_asc(ii)) k_time(dd, req_order_asc(ii-1))]); 
+       trel(dd, req_order_asc(ii), curr_k) = max([trel(dd, req_order_asc(ii), curr_k) k_time(dd, req_order_asc(ii-1))]);
     end
     
-%     for ee = 1:num_edges %TODO: Balikin ke req_nodes aja
-%         for ff = ee+1:num_edges
-%             
-%             if temps(ee, ff, dd)
-%                 k_trel(dd, ff) = max([k_trel(dd, ff) k_time(dd, ee)]);
-% %                 fprintf('%d %d %.4f\n', ee, ff, k_time(dd, ee));
-%             end
-%             if temps(ff, ee, dd)
-%                 k_trel(dd, ee) = max([k_trel(dd, ee) k_time(dd, ff)]);
-% %                 fprintf('%d %d %.4f\n', ff, ee, k_time(dd, ff));
-%             end
-%         end
-%     end
 end
 

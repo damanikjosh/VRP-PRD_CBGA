@@ -16,12 +16,13 @@ for i = 1:num_agents
     
     for d = 1:num_delivs
         for e = 1:num_edges
+%             fprintf('%d %d %d: %d %d %.4f\n', i, d, e, i_winner(d,e), k_reqs(d,e), i_score(d,e));
             if i_score(d,e) == 0 && k_score(d,e) == 0
                 continue
             end
             if (i_winner(d,e) > 0 && i_winner(d,e) ~= curr_k)
-                if (k_reqs(d, e) == 0) && (i_score(d,e) > max(k_score(d,:)))
-                    fprintf('Agent %d: Agent %d has score higher for all requests in task %d\n', curr_k, i, d);
+                if (k_reqs(d, e) == 0) && (i_score(d,e) > max(k_score(d,:)) || (i_score(d,e) == max(k_score(d,:)) && i_winner(d,e) < curr_k))
+                    fprintf('Agent %d: Agent %d has score higher for all requests in task %d\n', curr_k, k_winner(d, e), d);
                     for f = 1:num_edges
                         if k_winner(d,f) > 0
                             if k_winner(d,f) == curr_k
@@ -38,8 +39,8 @@ for i = 1:num_agents
                     k_winner(d, e) = i_winner(d, e);
                     k_time(d, e) = i_time(d, e);
                     calc_k_reqs;
-                elseif k_reqs(d, e) == 1 && i_score(d,e) > k_score(d,e)
-                    fprintf('Agent %d: Agent %d has score higher for request (%d,%d)\n', curr_k, i, d, e);
+                elseif k_reqs(d, e) == 1 && (i_score(d,e) > k_score(d,e) || (i_score(d,e) == k_score(d,e) && i_winner(d,e) < curr_k))
+                    fprintf('Agent %d: Agent %d has score higher for request (%d,%d)\n', curr_k, k_winner(d, e), d, e);
                     if k_winner(d,e) == curr_k
                         [k_bundle, k_rel_reqs] = k_bundle.release([d,e], sij);
                         for n = 1:size(k_rel_reqs, 1)
@@ -54,10 +55,14 @@ for i = 1:num_agents
                     calc_k_reqs;
                 end
             end
-            if (k_winner(d, e) == i)
-                k_score(d, e) = i_score(d, e);
-                k_winner(d, e) = i_winner(d, e);
-                k_time(d, e) = i_time(d, e);
+%             if (k_winner(d, e) == i) && (i_winner(d,e) == i || i_winner(d,e) == 0)
+%                 k_score(d, e) = i_score(d, e);
+%                 k_winner(d, e) = i_winner(d, e);
+%                 k_time(d, e) = i_time(d, e);
+%                 calc_k_reqs;
+%             end
+            if trel(d,e,i) > trel(d,e,curr_k)
+                trel(d,e,curr_k) = trel(d,e,i);
             end
         end
     end
