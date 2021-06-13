@@ -1,10 +1,10 @@
 clear all, clc, close all;
 
-rng_num = 10;
+rng_num = 1;
 rng(rng_num);
 
-T_SAT_MAX = 5;
-S_MAX = 30;
+T_SAT_MAX = 1;
+S_MAX = 200;
 Q_MAX = 20;
 RELAY_MULT = 1;
 
@@ -12,16 +12,9 @@ generate_graph_random;
 generate_edges;
 
 bundle = cell(num_agents, 1);
-path = cell(num_agents, 1);
-% timestamp = cell(num_agents, 1);
 
 for k = 1:num_agents
-    bundle{k} = [];
-%     path{k} = struct();
-    path{k}.node = [];
-    path{k}.time = [];
-    path{k}.tr = [];
-%     timestamp{k} = [];
+    bundle{k} = Bundle(agent(k), sij);
 end
 
 score = zeros(num_delivs, num_edges, num_agents);
@@ -31,40 +24,62 @@ time = zeros(num_delivs, num_edges, num_agents);
 t_start = tic;
 t_sat = 0;
 
+
+
 for iter = 1:20
     last_score = score;
+    last_time = time;
+    
     for k = 1:num_agents
         curr_k = k;
         
-        phase_1;
-        bundle{k} = k_bundle;
-        path{k} = k_path;
-%         timestamp{k} = k_timestamp;
-        score(:,:,k) = k_score;
-        winner(:,:,k) = k_winner;
-        time(:,:,k) = k_time;
+        k_rewards = rewards(:,:,k);
+        while true
+            phase_1;
+            bundle{k} = k_bundle;
+            score(:,:,k) = k_score;
+            winner(:,:,k) = k_winner;
+            time(:,:,k) = k_time;
+
+            phase_3;
+            bundle{k} = k_bundle;
+            score(:,:,k) = k_score;
+            winner(:,:,k) = k_winner;
+            time(:,:,k) = k_time;
+            
+            
+            if ~k_temporal_conflict
+                break
+            end
+        end
         
         phase_2;
         bundle{k} = k_bundle;
-        path{k} = k_path;
-%         timestamp{k} = k_timestamp;
         score(:,:,k) = k_score;
         winner(:,:,k) = k_winner;
         time(:,:,k) = k_time;
         
-        phase_3;
-        bundle{k} = k_bundle;
-        path{k} = k_path;
-%         timestamp{k} = k_timestamp;
-        score(:,:,k) = k_score;
-        winner(:,:,k) = k_winner;
-        time(:,:,k) = k_time;
+%         phase_3;
+%         bundle{k} = k_bundle;
+%         score(:,:,k) = k_score;
+%         winner(:,:,k) = k_winner;
+%         time(:,:,k) = k_time;
+%         
         
-        fprintf('Agent %d\n', k);
-        disp([k_path.node; k_path.time; k_path.tr]);
+%         bundle{k} = k_bundle;
+%         path{k} = k_path;
+% %         timestamp{k} = k_timestamp;
+%         score(:,:,k) = k_score;
+%         winner(:,:,k) = k_winner;
+%         time(:,:,k) = k_time;
+        fprintf('Agent %d\nBundle:\n', k);
+        disp(array2table([k_bundle.bids.req'; k_bundle.bids.marg'; k_bundle.bids.margw'; k_bundle.bids.time(:,1)'; k_bundle.bids.time(:,2)'], 'RowName', {'d', 'e', 'marg', 'margw', 'time1', 'time2'}));
+        fprintf('Path:\n');
+        disp(array2table([k_bundle.path.node'; k_bundle.path.time'; k_bundle.path.trel'], 'RowName', {'Nodes', 'Time', 'Trel'}));
+        fprintf('=========================================================\n');
     end
     
-    if isequal(score, last_score)
+    if isequal(score, last_score) && isequal(time, last_time)
         t_sat = t_sat + 1;
     else
         t_sat = 0;
@@ -79,7 +94,7 @@ t_end = toc(t_start);
 %%
 figure(2);
 for k = 1:num_agents
-    highlight(p, [agent(k).nodes(1) [path{k}.node] agent(k).nodes(2)], ...
+    highlight(p, bundle{k}.path.node, ...
                  'EdgeColor', agent_color(k,:), ...
                  'LineWidth', 2);
 end
@@ -94,8 +109,8 @@ fprintf('AGENT PATH\n')
 fprintf('=========================================================\n');
 for k = 1:num_agents
     fprintf('A%d\t:\t', k);
-    for n = 1:length(path{k})
-        fprintf('%d > ', path{k}(n).node);
+    for n = 1:length(bundle{k}.path.node)
+        fprintf('%d > ', bundle{k}.path.node(n));
     end
     fprintf('END\n');
 end

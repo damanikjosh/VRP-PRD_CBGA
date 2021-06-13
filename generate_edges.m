@@ -6,7 +6,7 @@ G = digraph(s,t,w);
 G_hubs = subgraph(G, 1:num_hubs);
 edges = G_hubs.Edges{:,:};
 num_edges = size(edges,1);
-rewards = zeros(num_edges, num_delivs);
+rewards = zeros(num_delivs, num_edges, num_agents);
 
 for e = 1:num_edges
     for d = 1:num_delivs
@@ -17,29 +17,44 @@ for e = 1:num_edges
 %         rewards(e,d) = max(0, rewards(e,d));
 %         rewards(e,d) = min(max_reward, rewards(e,d));
         %% New Scoring Scheme
-        if all(deliv(d).nodes == edges(e,1:2)')
-            rewards(e,d) = max_reward;
-        elseif deliv(d).nodes(1) == edges(e,1)
-            rewards(e,d) = max_reward * edges(e,3) / ...
-                (edges(e,3) + sij(edges(e,2), deliv(d).nodes(2)));
-        elseif deliv(d).nodes(2) == edges(e,2)
-            rewards(e,d) = max_reward * edges(e,3) / ...
-                (edges(e,3) + sij(deliv(d).nodes(1), edges(e,1)));
+        if edges(e,1) == deliv(d).nodes(1) || edges(e,2) == deliv(d).nodes(2)
+            rewards(d,e,1) = max_reward * sij(edges(e,1), edges(e,2)) / ...
+                               (sij(deliv(d).nodes(1), edges(e,1)) + ...
+                                sij(edges(e,1), edges(e,2)) + ...
+                                sij(edges(e,2), deliv(d).nodes(2)));
+        else
+            rewards(d,e,1) = 0;
         end
+%         if all(deliv(d).nodes == edges(e,1:2)')
+%             rewards(e,d) = max_reward;
+%         elseif deliv(d).nodes(1) == edges(e,1)
+%             rewards(e,d) = max_reward * edges(e,3) / ...
+%                 (edges(e,3) + sij(edges(e,2), deliv(d).nodes(2)));
+%         elseif deliv(d).nodes(2) == edges(e,2)
+%             rewards(e,d) = max_reward * edges(e,3) / ...
+%                 (edges(e,3) + sij(deliv(d).nodes(1), edges(e,1)));
+%         end
     end
+end
+
+for k = 1:num_agents
+    rewards(:,:,k) = rewards(:,:,1);
 end
 
 %% Temporal constant
 temps = zeros(num_edges, num_edges, num_delivs);
 for d = 1:num_delivs
     for e = 1:num_edges
-        if edges(e, 1) ~= deliv(d).nodes(1)
-            [~, f] = ismember([deliv(d).nodes(1) edges(e,1)], edges(:,1:2), 'rows');
-            temps(f, e, d) = 1; 
+        if edges(e, 2) == deliv(d).nodes(1)
+            continue
         end
-        if edges(e, 2) ~= deliv(d).nodes(2)
-            [~, f] = ismember([edges(e,2) deliv(d).nodes(2)], edges(:,1:2), 'rows');
-            temps(e, f, d) = 1;
+        for f = 1:num_edges
+            if edges(f, 1) == deliv(d).nodes(2)
+                continue
+            end
+            if edges(e, 2) == edges(f, 1)
+                temps(e, f, d) = 1;
+            end
         end
     end
 end

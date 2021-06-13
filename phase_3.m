@@ -1,5 +1,3 @@
-k_path = path{curr_k};
-% k_timestamp = timestamp{curr_k};
 k_bundle = bundle{curr_k};
 
 k_score = score(:,:,curr_k);
@@ -7,15 +5,24 @@ k_winner = winner(:,:,curr_k);
 k_time = time(:,:,curr_k);
 
 calc_k_reqs;
-k_bundle = extract_time(k_bundle, k_path);
+% k_bundle = extract_time(k_bundle, k_path);
+k_temporal_conflict = false;
 
-for nn = length(k_bundle):-1:1
-    d = k_bundle(nn).req(1);
-    e = k_bundle(nn).req(2);
-    if k_bundle(nn).time(1) < k_tr(d, e)
-        k_rel_d = d;
-        k_rel_e = e;
-        release_task;
-        fprintf('Agent %d: Releasing task %d (temporal conflict)\n', curr_k, d);
+for nn = length(k_bundle.bids.req):-1:1
+    if size(k_bundle.bids.req, 1) < nn
+        continue
+    end
+    d = k_bundle.bids.req(nn,1);
+    e = k_bundle.bids.req(nn,2);
+    if k_bundle.bids.time(nn,1) < k_trel(d, e)
+        fprintf('Agent %d: Temporal conflict, releasing request (%d,%d)\n', curr_k, d, e);
+        k_temporal_conflict = true;
+        [k_bundle, k_rel_reqs] = k_bundle.release([d,e], sij);
+        for n = 1:size(k_rel_reqs, 1)
+            k_score(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
+            k_winner(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
+            k_time(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
+        end
+        k_rewards(d, e) = 0;
     end
 end

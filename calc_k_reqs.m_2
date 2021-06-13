@@ -1,0 +1,75 @@
+k_reqs = zeros(num_delivs, num_edges);
+k_trel = zeros(num_delivs, num_edges);
+% k_dely = +1e10 * ones(num_delivs, num_edges);
+
+for dd = 1:num_delivs
+    req_edges = find(k_score(dd, :) > 0);
+    if isempty(req_edges)
+        continue
+    end
+    
+    start_edges = find(edges(:,1) == deliv(dd).nodes(1));
+    end_edges = find(edges(:,2) == deliv(dd).nodes(2));
+    
+    req_order_asc = [];
+    req_order_desc = [];
+    
+    while ~isempty(req_edges)
+        if isempty(req_order_asc)
+            if ismember(req_edges(1), start_edges)
+                req_order_asc = req_edges(1);
+                req_edges(1) = [];
+                continue
+            end
+        else
+            if temps(req_order_asc(end), req_edges(1))
+                req_order_asc = [req_order_asc, req_edges(1)];
+                req_edges(1) = [];
+                continue
+            end
+        end
+        if isempty(req_order_desc)
+            if ismember(req_edges(1), end_edges)
+                req_order_desc = req_edges(1);
+                req_edges(1) = [];
+                continue
+            end
+        else
+            if temps(req_edges(1), req_order_desc(1))
+                req_order_desc = [req_edges(1), req_order_desc];
+                req_edges(1) = [];
+            end
+        end
+    end
+    
+    if isempty(req_order_asc)
+        [~, 
+    end
+    
+    assert(length(req_edges) <= 1, 'error calculating calc_k_reqs');
+    
+    
+    
+    for ee = req_order_asc
+        k_reqs(dd, ee) = 1;
+    end
+    
+    for ii = 2:length(req_order_asc)
+       k_trel(dd, req_order_asc(ii)) = max([k_trel(dd, req_order_asc(ii)) k_time(dd, req_order_asc(ii-1))]); 
+    end
+    
+%     for ee = 1:num_edges %TODO: Balikin ke req_nodes aja
+%         for ff = ee+1:num_edges
+%             
+%             if temps(ee, ff, dd)
+%                 k_trel(dd, ff) = max([k_trel(dd, ff) k_time(dd, ee)]);
+% %                 fprintf('%d %d %.4f\n', ee, ff, k_time(dd, ee));
+%             end
+%             if temps(ff, ee, dd)
+%                 k_trel(dd, ee) = max([k_trel(dd, ee) k_time(dd, ff)]);
+% %                 fprintf('%d %d %.4f\n', ff, ee, k_time(dd, ff));
+%             end
+%         end
+%     end
+end
+
