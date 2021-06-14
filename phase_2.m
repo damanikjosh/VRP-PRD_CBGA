@@ -20,9 +20,9 @@ for i = 1:num_agents
             if i_score(d,e) == 0 && k_score(d,e) == 0
                 continue
             end
-            if (i_winner(d,e) > 0 && i_winner(d,e) ~= curr_k)
+            if (i_winner(d,e) == i)
                 if (k_reqs(d, e) == 0) && (i_score(d,e) > max(k_score(d,:)) || (i_score(d,e) == max(k_score(d,:)) && i_winner(d,e) < curr_k))
-                    fprintf('Agent %d: Agent %d has score higher for all requests in task %d\n', curr_k, k_winner(d, e), d);
+                    fprintf('Agent %d: Agent %d has score higher for all requests in task %d\n', curr_k, i, d);
                     for f = 1:num_edges
                         if k_winner(d,f) > 0
                             if k_winner(d,f) == curr_k
@@ -40,7 +40,7 @@ for i = 1:num_agents
                     k_time(d, e) = i_time(d, e);
                     calc_k_reqs;
                 elseif k_reqs(d, e) == 1 && (i_score(d,e) > k_score(d,e) || (i_score(d,e) == k_score(d,e) && i_winner(d,e) < curr_k))
-                    fprintf('Agent %d: Agent %d has score higher for request (%d,%d)\n', curr_k, k_winner(d, e), d, e);
+                    fprintf('Agent %d: Agent %d has score higher for request (%d,%d)\n', curr_k, i, d, e);
                     if k_winner(d,e) == curr_k
                         [k_bundle, k_rel_reqs] = k_bundle.release([d,e], sij);
                         for n = 1:size(k_rel_reqs, 1)
@@ -54,6 +54,11 @@ for i = 1:num_agents
                     k_time(d, e) = i_time(d, e);
                     calc_k_reqs;
                 end
+            elseif (i_winner(d,e) == 0 && k_winner(d,e) == i)
+                k_score(d, e) = i_score(d, e);
+                k_winner(d, e) = i_winner(d, e);
+                k_time(d, e) = i_time(d, e);
+                calc_k_reqs;
             end
 %             if (k_winner(d, e) == i) && (i_winner(d,e) == i || i_winner(d,e) == 0)
 %                 k_score(d, e) = i_score(d, e);

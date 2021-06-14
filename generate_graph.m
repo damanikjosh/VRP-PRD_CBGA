@@ -4,7 +4,7 @@ num_hubs = 4;
 num_delivs = 2;
 num_agents = 1;
 
-max_reward = 100;
+max_reward = 10;
 
 num_nodes = 0;
 nodes_pos = [];

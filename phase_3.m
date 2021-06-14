@@ -15,7 +15,7 @@ for nn = length(k_bundle.bids.req):-1:1
     d = k_bundle.bids.req(nn,1);
     e = k_bundle.bids.req(nn,2);
     if k_bundle.bids.time(nn,2) < trel(d, e, curr_k) + sij(edges(e,1), edges(e,2))
-        fprintf('Agent %d: Temporal conflict, releasing request (%d,%d)\n', curr_k, d, e);
+        fprintf('Agent %d: Temporal conflict, releasing request (%d,%d): %.4f < %.4f\n', curr_k, d, e, k_bundle.bids.time(nn,2), trel(d, e, curr_k) + sij(edges(e,1), edges(e,2)));
         k_temporal_conflict = true;
         [k_bundle, k_rel_reqs] = k_bundle.release([d,e], sij);
         for n = 1:size(k_rel_reqs, 1)

@@ -4,7 +4,7 @@ rng_num = 2;
 rng(rng_num);
 
 T_SAT_MAX = 5;
-S_MAX = 2000;
+S_MAX = 30;
 Q_MAX = 20;
 RELAY_MULT = 1;
 
@@ -40,7 +40,7 @@ for iter = 1:100
             score(:,:,k) = k_score;
             winner(:,:,k) = k_winner;
             time(:,:,k) = k_time;
-
+% 
 %             phase_3;
 %             bundle{k} = k_bundle;
 %             score(:,:,k) = k_score;
