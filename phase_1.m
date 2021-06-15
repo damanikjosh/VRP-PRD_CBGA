@@ -70,19 +70,19 @@ for phase1_iter = 1:20
     if k_reqs(k_max_req(1), k_max_req(2)) == 0 && k_max_margw > max(k_score(k_max_req(1),:))
         fprintf('Agent %d: Resetting all requests from task %d\n', curr_k, k_max_req(1));
         for f = 1:num_edges
-            if k_reqs(k_max_req(1), f) == 0 && k_score(k_max_req(1), f) > 0
-                if k_winner(k_max_req(1), f) == curr_k
-                    [k_bundle, k_rel_reqs] = k_bundle.release(k_max_req, sij, true);
-                    for n = 1:size(k_rel_reqs, 1)
-                        k_score(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
-                        k_winner(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
-                        k_time(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
-                    end
-                end
-%                 k_score(k_max_req(1), f) = 0;
-%                 k_winner(k_max_req(1), f) = 0;
-%                 k_winner(k_max_req(1), f) = 0;
-            end
+%             if k_reqs(k_max_req(1), f) == 0 && k_score(k_max_req(1), f) > 0
+%                 if k_winner(k_max_req(1), f) == curr_k
+%                     [k_bundle, k_rel_reqs] = k_bundle.release(k_max_req, sij, true);
+%                     for n = 1:size(k_rel_reqs, 1)
+%                         k_score(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
+%                         k_winner(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
+%                         k_time(k_rel_reqs(n,1), k_rel_reqs(n,2)) = 0;
+%                     end
+%                 end
+                k_score(k_max_req(1), f) = 0;
+                k_winner(k_max_req(1), f) = 0;
+                k_winner(k_max_req(1), f) = 0;
+%             end
         end
     end
     
