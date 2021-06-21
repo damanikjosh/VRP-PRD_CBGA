@@ -12,7 +12,7 @@ classdef Bundle
     end
     
     properties (Constant)
-        LAMBDA = 0.8
+        LAMBDA = 0.9
     end
     
     methods
@@ -85,7 +85,7 @@ classdef Bundle
                 
                 next_bids.ij(end, :) = [i j];
                 next_bids = obj.calc_bids(next_bids, next_path);
-                score = sum(next_bids.reward .* (obj.LAMBDA .^ (next_bids.time(:,2))));
+                score = sum(next_bids.reward .* (obj.LAMBDA .^ (next_bids.time(:,2) - next_path.trel(next_bids.ij(:,2)))));
                 next_bids.marg(end) = score - obj.score;
                 next_bids.margw(end) = min([next_bids.marg(end); obj.bids.margw]);
 
@@ -112,7 +112,7 @@ classdef Bundle
                         next_bids.ij(end, :)  = [i jj+1];
                         next_bids.add(end, :) = [0 1];
                         next_bids = obj.calc_bids(next_bids, next_path);
-                        score = sum(next_bids.reward .* (obj.LAMBDA .^ (next_bids.time(:,2))));
+                        score = sum(next_bids.reward .* (obj.LAMBDA .^ (next_bids.time(:,2) - next_path.trel(next_bids.ij(:,2)))));
                         next_bids.marg(end) = score - obj.score;
                         next_bids.margw(end) = min([next_bids.marg(end); obj.bids.margw]);
 
@@ -141,7 +141,7 @@ classdef Bundle
                         next_bids.ij(end, :)  = [ii+1 j+1];
                         next_bids.add(end, :) = [1    0];
                         next_bids = obj.calc_bids(next_bids, next_path);
-                        score = sum(next_bids.reward .* (obj.LAMBDA .^ (next_bids.time(:,2))));
+                        score = sum(next_bids.reward .* (obj.LAMBDA .^ (next_bids.time(:,2) - next_path.trel(next_bids.ij(:,2)))));
                         next_bids.marg(end) = score - obj.score;
                         next_bids.margw(end) = min([next_bids.marg(end); obj.bids.margw]);
 
@@ -171,7 +171,7 @@ classdef Bundle
                         next_bids.ij(end, :)  = [ii+1 jj+2];
                         next_bids.add(end, :) = [1    1];
                         next_bids = obj.calc_bids(next_bids, next_path);
-                        score = sum(next_bids.reward .* (obj.LAMBDA .^ (next_bids.time(:,2))));
+                        score = sum(next_bids.reward .* (obj.LAMBDA .^ (next_bids.time(:,2) - next_path.trel(next_bids.ij(:,2)))));
                         next_bids.marg(end) = score - obj.score;
                         next_bids.margw(end) = min([next_bids.marg(end); obj.bids.margw]);
 
@@ -231,7 +231,7 @@ classdef Bundle
                 
                 obj.path = obj.calc_path(obj.path, sij);
                 obj.bids = obj.calc_bids(obj.bids, obj.path);
-                obj.score = sum(obj.bids.reward .* (obj.LAMBDA .^ (obj.bids.time(:,2))));
+                obj.score = sum(obj.bids.reward .* (obj.LAMBDA .^ (obj.bids.time(:,2) - obj.path.trel(obj.bids.ij(:,2)))));
             end
         end
     end

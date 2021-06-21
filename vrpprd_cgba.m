@@ -4,7 +4,7 @@ rng_num = 2;
 rng(rng_num);
 
 T_SAT_MAX = 5;
-S_MAX = 30;
+S_MAX = 1000;
 Q_MAX = 20;
 RELAY_MULT = 1;
 

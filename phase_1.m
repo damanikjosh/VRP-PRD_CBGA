@@ -36,14 +36,14 @@ for phase1_iter = 1:20
             k_feas2 = k_reqs(d,e) && (k_next_margw > k_score(d,e));
             k_feas = k_feas1 || k_feas2;
             
-            if k_reqs(d,e) && k_winner(d,e) == 0
-                k_next_marg = k_next_marg * 1.5;
-                if length(k_next_bundle.bids.margw) > 1
-                    k_next_margw = min([k_next_marg, k_next_bundle.bids.margw(end-1)]);
-                else
-                    k_next_margw = k_next_marg;
-                end
-            end
+%             if k_reqs(d,e) && k_winner(d,e) == 0
+%                 k_next_marg = k_next_marg * 1.5;
+%                 if length(k_next_bundle.bids.margw) > 1
+%                     k_next_margw = min([k_next_marg, k_next_bundle.bids.margw(end-1)]);
+%                 else
+%                     k_next_margw = k_next_marg;
+%                 end
+%             end
             
             if k_feas && (k_next_marg > k_max_marg)
                 k_max_marg = k_next_marg;
@@ -54,7 +54,7 @@ for phase1_iter = 1:20
         end
     end
     
-    if k_max_marg <= 0
+    if k_max_marg <= 10
         break
     end
     
