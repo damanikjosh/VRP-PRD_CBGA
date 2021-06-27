@@ -4,7 +4,7 @@ rng_num = 2;
 rng(rng_num);
 
 T_SAT_MAX = 5;
-S_MAX = 1000;
+S_MAX = 30;
 Q_MAX = 20;
 RELAY_MULT = 1;
 
@@ -126,7 +126,11 @@ fprintf('=========================================================\n');
 fprintf('DELIVERY PATH\n')
 fprintf('=========================================================\n');
 for d = 1:num_delivs
-    edge_idxs = find(winner(d,:,1) > 0);
+    edge_idxs = [];
+    for k = 1:num_agents
+        new_edge_idx = find(winner(d,:,k) > 0);
+        edge_idxs = unique([edge_idxs new_edge_idx]);
+    end
     node_lists = edges(edge_idxs, 1:2);
     
     last_node_idx = find(node_lists(:,1) == deliv(d).nodes(1),1);

@@ -54,7 +54,7 @@ for phase1_iter = 1:20
         end
     end
     
-    if k_max_marg <= 10
+    if k_max_marg <= 0
         break
     end
     
